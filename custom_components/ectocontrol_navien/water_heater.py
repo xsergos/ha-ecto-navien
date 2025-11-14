@@ -3,7 +3,7 @@ from typing import Any
 
 from homeassistant.components.water_heater import (
     PRECISION_WHOLE,
-    STATE_ELECTRIC,
+    STATE_GAS,
     STATE_OFF,
     WaterHeaterEntity,
     WaterHeaterEntityFeature,
@@ -29,10 +29,12 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         super().__init__(coordinator)
         self._attr_name = "Горячая вода (ГВС)"
         self._attr_unique_id = f"{coordinator.api._object_id}_dhw"
-        self._attr_supported_features = (
-            WaterHeaterEntityFeature.TARGET_TEMPERATURE
-            | WaterHeaterEntityFeature.OPERATION_MODE
-        )
+        self._attr_operation_list = [STATE_GAS, STATE_OFF]
+        self._attr_supported_features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
+
+    @property
+    def state(self):
+        return self.current_operation_mode
 
     @property
     def device_info(self) -> dict:
@@ -78,14 +80,9 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
             status = 0
 
         if status == 1:
-            return STATE_ELECTRIC
+            return STATE_GAS
 
         return STATE_OFF
-
-    @property
-    def operation_list(self):
-        current_mode = self.current_operation_mode
-        return [current_mode] if current_mode else []
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         temperature = kwargs.get(ATTR_TEMPERATURE)
@@ -112,7 +109,7 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
             )
             return
 
-        if await self.coordinator.api.set_dhw_temp(int(temperature)):
+        if await self.coordinator.api.set_dwh_temp(int(temperature)):
             _LOGGER.info("Установлена целевая температура ГВС: %s°C", temperature)
             await self.coordinator.async_request_refresh()
         else:

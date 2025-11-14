@@ -17,7 +17,7 @@ SENSOR_TYPES = {
         "°C",
         SensorDeviceClass.TEMPERATURE,
     ),
-    "dhw_temperature": (
+    "dwh_temperature": (
         "Температура ГВС",
         "state",
         "hot_water_supply_temperature",
@@ -31,7 +31,7 @@ SENSOR_TYPES = {
         "°C",
         SensorDeviceClass.TEMPERATURE,
     ),
-    "set_dhw_temp": (
+    "set_dwh_temp": (
         "Целевая температура ГВС",
         "config",
         "set_heat_water_temperature",
