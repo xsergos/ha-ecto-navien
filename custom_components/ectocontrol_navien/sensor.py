@@ -38,7 +38,7 @@ SENSOR_TYPES = {
         "°C",
         SensorDeviceClass.TEMPERATURE,
     ),
-    "error_code": ("Ошибка котла", "state", "error_code", None, None),
+    "error_code": ("Код ошибки", "state", "error_code", None, None),
     "system_state_name": ("Статус котла", "state", "lk.state_name", None, None),
 }
 
@@ -76,6 +76,13 @@ class EctocontrolSensor(CoordinatorEntity, SensorEntity):
         data_section = self.coordinator.data.get(self._path_section, {})
 
         value = get_nested_value(data_section, self._path_key)
+
+        if self._key == "error_code" and value is not None:
+            try:
+                if int(value) == 0:
+                    return "Нет"
+            except ValueError:
+                pass
 
         if (
             value is not None
