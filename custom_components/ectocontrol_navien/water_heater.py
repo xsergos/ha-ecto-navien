@@ -30,6 +30,7 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         self._attr_name = "Горячая вода (ГВС)"
         self._attr_unique_id = f"{coordinator.api._object_id}_dhw"
         self._attr_operation_list = [STATE_GAS, STATE_OFF]
+        self._attr_target_temperature_step = 1.0
         self._attr_supported_features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
 
     @property
