@@ -5,7 +5,6 @@ import aiohttp
 
 from .const import (
     API_BASE_URL,
-    API_GET_OBJECT,
     API_LOGIN,
     DEVICE_INFO_MANUFACTURER,
     DEVICE_INFO_MODEL,

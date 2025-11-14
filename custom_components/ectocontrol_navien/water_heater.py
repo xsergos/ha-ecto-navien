@@ -1,17 +1,22 @@
 import logging
+from typing import Any
 
 from homeassistant.components.water_heater import (
+    PRECISION_WHOLE,
     STATE_ELECTRIC,
     STATE_OFF,
     WaterHeaterEntity,
     WaterHeaterEntityFeature,
 )
+from homeassistant.const import ATTR_TEMPERATURE
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .ectocontrol_api import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
+
+TEMP_STEP = 1.0
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -35,6 +40,10 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         return "°C"
 
     @property
+    def precision(self):
+        return PRECISION_WHOLE
+
+    @property
     def current_temperature(self):
         temp = self.coordinator.data.get("state", {}).get(
             "hot_water_supply_temperature"
@@ -54,11 +63,11 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
     @property
     def max_temp(self):
         temp = self.coordinator.data.get("config", {}).get("heat_water_max_temperature")
-        return float(temp) if temp is not None else 45.0
+        return float(temp) if temp is not None else 50.0
 
     @property
     def current_operation_mode(self):
-        status = self.coordinator.data.get("state", {}).get("heat_water")
+        status = self.coordinator.data.get("config", {}).get("heat_water")
         if status == 1:
             return STATE_ELECTRIC
 
@@ -68,13 +77,35 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
     def operation_list(self):
         return [STATE_OFF, STATE_ELECTRIC]
 
-    async def async_set_temperature(self, **kwargs):
-        temperature = kwargs.get("temperature")
+    async def async_set_temperature(self, **kwargs: Any) -> None:
+        temperature = kwargs.get(ATTR_TEMPERATURE)
+
         if temperature is None:
             return
 
-        success = await self.coordinator.api.set_dwh_temp(temperature)
-        if success:
+        if temperature % TEMP_STEP != 0:
+            rounded_temp = round(temperature / TEMP_STEP) * TEMP_STEP
+            _LOGGER.warning(
+                "Температура %s°C не кратна %s. Округлено до %s°C.",
+                temperature,
+                TEMP_STEP,
+                rounded_temp,
+            )
+            temperature = rounded_temp
+
+        if temperature < self.min_temp or temperature > self.max_temp:
+            _LOGGER.error(
+                "Установленная температура %s°C вне допустимого диапазона [%s, %s]",
+                temperature,
+                self.min_temp,
+                self.max_temp,
+            )
+            return
+
+        if await self.coordinator.api.set_dhw_temp(int(temperature)):
+            _LOGGER.info("Установлена целевая температура ГВС: %s°C", temperature)
             await self.coordinator.async_request_refresh()
         else:
-            _LOGGER.error("Не удалось установить целевую температуру ГВС.")
+            _LOGGER.error(
+                "Не удалось установить целевую температуру ГВС: %s°C", temperature
+            )

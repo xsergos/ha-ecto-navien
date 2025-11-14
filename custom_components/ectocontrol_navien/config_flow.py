@@ -5,7 +5,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import CONF_OBJECT_ID, CONF_PASSWORD, CONF_USERNAME, DOMAIN
+from .const import CONF_OBJECT_ID, DOMAIN
 from .ectocontrol_api import EctocontrolAPI
 
 _LOGGER = logging.getLogger(__name__)
