@@ -29,7 +29,10 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         super().__init__(coordinator)
         self._attr_name = "Горячая вода (ГВС)"
         self._attr_unique_id = f"{coordinator.api._object_id}_dhw"
-        self._attr_supported_features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
+        self._attr_supported_features = (
+            WaterHeaterEntityFeature.TARGET_TEMPERATURE
+            | WaterHeaterEntityFeature.OPERATION_MODE
+        )
 
     @property
     def device_info(self) -> dict:
@@ -68,6 +71,12 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
     @property
     def current_operation_mode(self):
         status = self.coordinator.data.get("config", {}).get("heat_water")
+
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            status = 0
+
         if status == 1:
             return STATE_ELECTRIC
 
@@ -75,7 +84,8 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
 
     @property
     def operation_list(self):
-        return [STATE_OFF, STATE_ELECTRIC]
+        current_mode = self.current_operation_mode
+        return [current_mode] if current_mode else []
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         temperature = kwargs.get(ATTR_TEMPERATURE)
