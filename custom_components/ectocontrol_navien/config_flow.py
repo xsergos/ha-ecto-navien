@@ -10,17 +10,15 @@ from .ectocontrol_api import EctocontrolAPI
 
 _LOGGER = logging.getLogger(__name__)
 
-CUSTOM_OBJECT_ID_PROMPT = "Введите objectid адаптера котла Navien"
-
 DATA_SCHEMA_AUTH = vol.Schema(
     {
-        vol.Required(CONF_USERNAME, label="Email"): str,
-        vol.Required(CONF_PASSWORD, label="Password"): str,
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
     }
 )
 
 DATA_SCHEMA_OBJECT = vol.Schema(
-    {vol.Required(CONF_OBJECT_ID, label=CUSTOM_OBJECT_ID_PROMPT): str}
+    {vol.Required(CONF_OBJECT_ID): str}
 )
 
 
