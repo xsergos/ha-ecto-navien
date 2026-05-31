@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 
@@ -12,6 +13,8 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+REQUEST_TIMEOUT = aiohttp.ClientTimeout(total=20)
 
 
 def get_nested_value(data: dict, path: str):
@@ -59,7 +62,9 @@ class EctocontrolAPI:
         _LOGGER.debug("-----------------------------------------------------")
 
         try:
-            async with self._session.post(url, data=data, headers=headers) as resp:
+            async with self._session.post(
+                url, data=data, headers=headers, timeout=REQUEST_TIMEOUT
+            ) as resp:
                 status_code = resp.status
                 response_text = await resp.text()
 
@@ -78,8 +83,17 @@ class EctocontrolAPI:
 
                 return "SUCCESS", response_json
 
-        except aiohttp.ClientResponseError as e:
-            _LOGGER.error("HTTP/Сетевая ошибка при выполнении запроса %s: %s", url, e)
+        except (
+            asyncio.TimeoutError,
+            aiohttp.ClientConnectionError,
+            aiohttp.ClientResponseError,
+        ) as e:
+            _LOGGER.warning(
+                "Временная сетевая ошибка при выполнении запроса %s: %s", url, e
+            )
+            return "ERROR", None
+        except json.JSONDecodeError as e:
+            _LOGGER.warning("Некорректный JSON в ответе %s: %s", url, e)
             return "ERROR", None
         except Exception as e:
             _LOGGER.error("Непредвиденная ошибка при выполнении запроса %s: %s", url, e)

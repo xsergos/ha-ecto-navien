@@ -2,13 +2,16 @@ import logging
 from typing import Any
 
 from homeassistant.components.water_heater import (
-    PRECISION_WHOLE,
     STATE_GAS,
-    STATE_OFF,
     WaterHeaterEntity,
     WaterHeaterEntityFeature,
 )
-from homeassistant.const import ATTR_TEMPERATURE
+from homeassistant.const import (
+    ATTR_TEMPERATURE,
+    PRECISION_WHOLE,
+    STATE_OFF,
+    UnitOfTemperature,
+)
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
@@ -17,6 +20,7 @@ from .ectocontrol_api import get_device_info
 _LOGGER = logging.getLogger(__name__)
 
 TEMP_STEP = 1.0
+SENTINEL_TEMP_VALUE = 3276.7
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -43,7 +47,7 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
 
     @property
     def temperature_unit(self):
-        return "°C"
+        return UnitOfTemperature.CELSIUS
 
     @property
     def precision(self):
@@ -59,7 +63,15 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
     @property
     def target_temperature(self):
         temp = self.coordinator.data.get("config", {}).get("set_heat_water_temperature")
-        return float(temp) if temp is not None else None
+        if temp is None:
+            return None
+        try:
+            temp = float(temp)
+        except (ValueError, TypeError):
+            return None
+        if temp == SENTINEL_TEMP_VALUE:
+            return None
+        return temp
 
     @property
     def min_temp(self):

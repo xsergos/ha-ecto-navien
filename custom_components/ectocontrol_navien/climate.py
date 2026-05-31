@@ -7,7 +7,7 @@ from homeassistant.components.climate import (
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_TEMPERATURE
+from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -44,7 +44,7 @@ async def async_setup_entry(
 class EctocontrolNavienClimate(
     CoordinatorEntity[EctocontrolCoordinator], ClimateEntity
 ):
-    _attr_temperature_unit = "°C"
+    _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_has_entity_name = True
     _attr_name = "Отопление"
 
