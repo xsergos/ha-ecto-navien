@@ -60,6 +60,9 @@ class EctocontrolConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             object_id = user_input[CONF_OBJECT_ID]
 
+            await self.async_set_unique_id(object_id)
+            self._abort_if_unique_id_configured()
+
             await self._api_client.set_object_id(object_id)
 
             if await self._api_client.get_state():

@@ -16,6 +16,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     password = entry.data[CONF_PASSWORD]
     object_id = entry.data.get(CONF_OBJECT_ID)
 
+    if entry.unique_id is None and object_id:
+        hass.config_entries.async_update_entry(entry, unique_id=object_id)
+
     session = async_get_clientsession(hass)
 
     api = EctocontrolAPI(username, password, object_id, session)
