@@ -1,6 +1,11 @@
 import logging
 
-from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
+from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
@@ -14,28 +19,28 @@ SENSOR_TYPES = {
         "Температура теплоносителя",
         "state",
         "coolant_temperature",
-        "°C",
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
     ),
     "dwh_temperature": (
         "Температура ГВС",
         "state",
         "hot_water_supply_temperature",
-        "°C",
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
     ),
     "set_heating_temp": (
         "Целевая температура теплоносителя",
         "config",
         "set_channel_1_temperature",
-        "°C",
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
     ),
     "set_dwh_temp": (
         "Целевая температура ГВС",
         "config",
         "set_heat_water_temperature",
-        "°C",
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
     ),
     "error_code": ("Код ошибки", "state", "error_code", None, None),
@@ -66,6 +71,8 @@ class EctocontrolSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{coordinator.api._object_id}_{key}"
         self._attr_native_unit_of_measurement = unit
         self._attr_device_class = device_class
+        if device_class == SensorDeviceClass.TEMPERATURE:
+            self._attr_state_class = SensorStateClass.MEASUREMENT
 
     @property
     def device_info(self) -> dict:
@@ -81,7 +88,7 @@ class EctocontrolSensor(CoordinatorEntity, SensorEntity):
             try:
                 if int(value) == 0:
                     return "Нет"
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
 
         if (
@@ -98,7 +105,7 @@ class EctocontrolSensor(CoordinatorEntity, SensorEntity):
                     return None
 
                 return float_value
-            except ValueError:
-                return value
+            except (ValueError, TypeError):
+                return None
 
         return value

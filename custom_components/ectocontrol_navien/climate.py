@@ -91,7 +91,7 @@ class EctocontrolNavienClimate(
                 if temp == SENTINEL_TEMP_VALUE:
                     return None
                 return temp
-            except ValueError:
+            except (ValueError, TypeError):
                 _LOGGER.error(
                     "Не удалось преобразовать целевую температуру '%s' в число.",
                     temp_str,
