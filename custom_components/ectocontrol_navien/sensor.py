@@ -8,12 +8,11 @@ from homeassistant.components.sensor import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, SENTINEL_TEMP_VALUE
 from .ectocontrol_api import get_device_info, get_nested_value
 
 _LOGGER = logging.getLogger(__name__)
 
-SENTINEL_TEMP_VALUE = 3276.7
 SENSOR_TYPES = {
     "coolant_temperature": (
         "Температура теплоносителя",
@@ -59,6 +58,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class EctocontrolSensor(CoordinatorEntity, SensorEntity):
+    _attr_has_entity_name = True
+
     def __init__(
         self, coordinator, key, name, path_section, path_key, unit, device_class=None
     ):

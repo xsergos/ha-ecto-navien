@@ -12,3 +12,6 @@ CONF_OBJECT_ID = "object_id"
 
 DEVICE_INFO_MANUFACTURER = "Ectocontrol"
 DEVICE_INFO_MODEL = "Navien Adapter"
+
+# Ectocontrol отдаёт это значение вместо температуры, когда она не задана.
+SENTINEL_TEMP_VALUE = 3276.7

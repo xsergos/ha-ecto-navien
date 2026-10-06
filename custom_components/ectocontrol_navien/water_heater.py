@@ -15,13 +15,12 @@ from homeassistant.const import (
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, SENTINEL_TEMP_VALUE
 from .ectocontrol_api import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
 TEMP_STEP = 1.0
-SENTINEL_TEMP_VALUE = 3276.7
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -30,6 +29,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
+    _attr_has_entity_name = True
+
     def __init__(self, coordinator):
         super().__init__(coordinator)
         self._attr_name = "Горячая вода (ГВС)"

@@ -13,14 +13,13 @@ from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, SENTINEL_TEMP_VALUE
 from .coordinator import EctocontrolCoordinator
 from .ectocontrol_api import get_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
 TEMP_STEP = 10.0
-SENTINEL_TEMP_VALUE = 3276.7
 
 HVAC_MODE_HEAT = HVACMode.HEAT
 HVAC_MODE_OFF = HVACMode.OFF
