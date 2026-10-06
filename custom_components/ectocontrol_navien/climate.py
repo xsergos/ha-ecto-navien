@@ -65,6 +65,10 @@ class EctocontrolNavienClimate(
     @property
     def hvac_mode(self) -> HVACMode:
         status = self.coordinator.data.get("config", {}).get("channel_1_status")
+        try:
+            status = int(status)
+        except (ValueError, TypeError):
+            status = 0
         return HVAC_MODE_HEAT if status == 1 else HVAC_MODE_OFF
 
     @property
