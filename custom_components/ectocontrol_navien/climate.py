@@ -97,17 +97,13 @@ class EctocontrolNavienClimate(
 
     @property
     def min_temp(self) -> float:
-        min_temp = self.coordinator.data.get("config", {}).get(
-            "channel_1_min_temperature", 40.0
-        )
-        return float(min_temp)
+        temp = self.coordinator.data.get("config", {}).get("channel_1_min_temperature")
+        return float(temp) if temp is not None else 40.0
 
     @property
     def max_temp(self) -> float:
-        max_temp = self.coordinator.data.get("config", {}).get(
-            "channel_1_max_temperature", 70.0
-        )
-        return float(max_temp)
+        temp = self.coordinator.data.get("config", {}).get("channel_1_max_temperature")
+        return float(temp) if temp is not None else 70.0
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         status = 1 if hvac_mode == HVAC_MODE_HEAT else 0
