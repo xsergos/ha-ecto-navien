@@ -3,9 +3,10 @@
     "name": "Ectocontrol Navien",
     "codeowners": ["@xsergos"],
     "config_flow": true,
+    "documentation": "https://github.com/xsergos/ha-ecto-navien",
     "iot_class": "cloud_polling",
     "issue_tracker": "https://github.com/xsergos/ha-ecto-navien/issues",
     "dependencies": [],
     "requirements": [],
-    "version": "1.0.1"
+    "version": "1.1.0"
 }
