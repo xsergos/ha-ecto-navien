@@ -12,6 +12,7 @@ from homeassistant.const import (
     STATE_OFF,
     UnitOfTemperature,
 )
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
@@ -110,13 +111,10 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
             temperature = rounded_temp
 
         if temperature < self.min_temp or temperature > self.max_temp:
-            _LOGGER.error(
-                "Установленная температура %s°C вне допустимого диапазона [%s, %s]",
-                temperature,
-                self.min_temp,
-                self.max_temp,
+            raise ServiceValidationError(
+                f"Температура {temperature} °C вне диапазона "
+                f"[{self.min_temp}, {self.max_temp}]"
             )
-            return
 
         if await self.coordinator.api.set_dwh_temp(int(temperature)):
             _LOGGER.info("Установлена целевая температура ГВС: %s°C", temperature)

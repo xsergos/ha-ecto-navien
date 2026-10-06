@@ -9,6 +9,7 @@ from homeassistant.components.climate import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -135,13 +136,10 @@ class EctocontrolNavienClimate(
             temperature = rounded_temp
 
         if temperature < self.min_temp or temperature > self.max_temp:
-            _LOGGER.error(
-                "Установленная температура %s°C вне допустимого диапазона [%s, %s]",
-                temperature,
-                self.min_temp,
-                self.max_temp,
+            raise ServiceValidationError(
+                f"Температура {temperature} °C вне диапазона "
+                f"[{self.min_temp}, {self.max_temp}]"
             )
-            return
 
         if await self.coordinator.api.set_heating_temp(temperature):
             _LOGGER.info("Установлена целевая температура отопления: %s°C", temperature)
