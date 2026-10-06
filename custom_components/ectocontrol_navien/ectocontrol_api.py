@@ -195,6 +195,8 @@ class EctocontrolAPI:
             )
             return None
 
+        # Ectocontrol не принимает целевую температуру при выключенном канале
+        # отопления, поэтому включение перед установкой обязательно.
         if not await self.set_heating_status(1):
             _LOGGER.warning(
                 "Не удалось включить отопление перед установкой температуры."
