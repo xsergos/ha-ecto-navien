@@ -26,7 +26,7 @@ SENTINEL_TEMP_VALUE = 3276.7
 
 async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([EctocontrolDWH(coordinator)], True)
+    async_add_entities([EctocontrolDWH(coordinator)])
 
 
 class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):

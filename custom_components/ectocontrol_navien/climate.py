@@ -39,7 +39,7 @@ async def async_setup_entry(
 ) -> None:
     coordinator: EctocontrolCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    async_add_entities([EctocontrolNavienClimate(coordinator)], True)
+    async_add_entities([EctocontrolNavienClimate(coordinator)])
 
 
 class EctocontrolNavienClimate(

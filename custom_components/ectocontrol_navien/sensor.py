@@ -55,7 +55,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     for key, data in SENSOR_TYPES.items():
         entities.append(EctocontrolSensor(coordinator, key, *data))
 
-    async_add_entities(entities, True)
+    async_add_entities(entities)
 
 
 class EctocontrolSensor(CoordinatorEntity, SensorEntity):
