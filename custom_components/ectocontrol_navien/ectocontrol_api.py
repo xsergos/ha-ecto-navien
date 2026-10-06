@@ -17,6 +17,10 @@ _LOGGER = logging.getLogger(__name__)
 REQUEST_TIMEOUT = aiohttp.ClientTimeout(total=20)
 
 
+class EctocontrolAuthError(Exception):
+    """Сервер отклонил логин или пароль."""
+
+
 def get_nested_value(data: dict, path: str):
     keys = path.split(".")
     value = data
@@ -115,7 +119,12 @@ class EctocontrolAPI:
             _LOGGER.info("Успешный вход в систему. Токен получен.")
             return True
 
-        _LOGGER.error("Ошибка входа: %s", response_json)
+        if status == "SUCCESS":
+            # Сервер ответил, но токен не выдал: неверный логин или пароль.
+            _LOGGER.error("Ошибка входа: %s", response_json)
+            raise EctocontrolAuthError
+
+        # Сетевая ошибка или некорректный ответ: сервис временно недоступен.
         return False
 
     async def _ensure_authenticated(self):

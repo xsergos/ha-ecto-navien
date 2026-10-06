@@ -2,10 +2,11 @@ import logging
 from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN
-from .ectocontrol_api import EctocontrolAPI
+from .ectocontrol_api import EctocontrolAPI, EctocontrolAuthError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +24,12 @@ class EctocontrolCoordinator(DataUpdateCoordinator):
         )
 
     async def _async_update_data(self):
-        success = await self.api.get_state()
+        try:
+            success = await self.api.get_state()
+        except EctocontrolAuthError as err:
+            raise ConfigEntryAuthFailed(
+                "Неверные учётные данные Ectocontrol"
+            ) from err
         if not success:
             raise UpdateFailed("Ошибка при получении данных с Ectocontrol API")
 
