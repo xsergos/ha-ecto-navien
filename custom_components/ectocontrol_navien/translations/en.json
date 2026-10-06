@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sign in to Ectocontrol",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        }
+      },
+      "object_id": {
+        "title": "Ectocontrol object",
+        "data": {
+          "object_id": "Ectocontrol object ID"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in to Ectocontrol again",
+        "description": "The server rejected the saved credentials. Please enter them again.",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password",
+      "cannot_connect": "Failed to reach Ectocontrol or fetch the object data"
+    },
+    "abort": {
+      "already_configured": "This object is already configured",
+      "already_in_progress": "Configuration for this object is already in progress",
+      "reauth_failed": "Authentication session lost, please start over",
+      "reauth_successful": "Credentials updated"
+    }
+  }
+}

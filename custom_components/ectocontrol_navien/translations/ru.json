@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Вход в Ectocontrol",
+        "data": {
+          "username": "Email",
+          "password": "Пароль"
+        }
+      },
+      "object_id": {
+        "title": "Объект Ectocontrol",
+        "data": {
+          "object_id": "ID объекта Ectocontrol"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Повторный вход в Ectocontrol",
+        "description": "Сервер отклонил сохранённые учётные данные. Введите их заново.",
+        "data": {
+          "username": "Email",
+          "password": "Пароль"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Неверный email или пароль",
+      "cannot_connect": "Не удалось связаться с Ectocontrol или получить данные объекта"
+    },
+    "abort": {
+      "already_configured": "Этот объект уже настроен",
+      "already_in_progress": "Настройка этого объекта уже идёт",
+      "reauth_failed": "Сессия аутентификации потеряна, начните заново",
+      "reauth_successful": "Учётные данные обновлены"
+    }
+  }
+}
