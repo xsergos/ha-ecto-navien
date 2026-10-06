@@ -38,10 +38,6 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         self._attr_supported_features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
 
     @property
-    def state(self):
-        return self.current_operation_mode
-
-    @property
     def device_info(self) -> dict:
         return get_device_info(self.coordinator.api._object_id, self.coordinator.data)
 
@@ -84,7 +80,7 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         return float(temp) if temp is not None else 50.0
 
     @property
-    def current_operation_mode(self):
+    def current_operation(self) -> str | None:
         status = self.coordinator.data.get("config", {}).get("heat_water")
 
         try:
