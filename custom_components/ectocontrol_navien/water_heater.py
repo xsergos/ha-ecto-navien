@@ -43,7 +43,7 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         return get_device_info(self.coordinator.api._object_id, self.coordinator.data)
 
     @property
-    def temperature_unit(self):
+    def native_temperature_unit(self):
         return UnitOfTemperature.CELSIUS
 
     @property
@@ -51,14 +51,14 @@ class EctocontrolDWH(CoordinatorEntity, WaterHeaterEntity):
         return PRECISION_WHOLE
 
     @property
-    def current_temperature(self):
+    def native_current_temperature(self):
         temp = self.coordinator.data.get("state", {}).get(
             "hot_water_supply_temperature"
         )
         return float(temp) if temp is not None else None
 
     @property
-    def target_temperature(self):
+    def native_target_temperature(self):
         temp = self.coordinator.data.get("config", {}).get("set_heat_water_temperature")
         if temp is None:
             return None

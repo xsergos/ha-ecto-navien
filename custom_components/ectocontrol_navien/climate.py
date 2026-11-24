@@ -44,7 +44,7 @@ async def async_setup_entry(
 class EctocontrolNavienClimate(
     CoordinatorEntity[EctocontrolCoordinator], ClimateEntity
 ):
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_has_entity_name = True
     _attr_name = "Отопление"
 
@@ -76,12 +76,12 @@ class EctocontrolNavienClimate(
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
     @property
-    def current_temperature(self) -> float | None:
+    def native_current_temperature(self) -> float | None:
         temp = self.coordinator.data.get("state", {}).get("coolant_temperature")
         return float(temp) if temp is not None else None
 
     @property
-    def target_temperature(self) -> float | None:
+    def native_target_temperature(self) -> float | None:
         temp_str = self.coordinator.data.get("config", {}).get(
             "set_channel_1_temperature"
         )
